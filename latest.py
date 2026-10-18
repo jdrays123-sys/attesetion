@@ -43,26 +43,24 @@ except ImportError:
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-MOTD_TEXT = ""
-
+MOTD_TEXT = "<color+purple>WELCOME TO FAST TAGGERS!</color>" # change the motd to whatever u want
 
 class GameInfo:
     def __init__(self):
-        self.TitleId:   str = ""
-        self.SecretKey: str = ""
-        self.ApiKey:    str = ""
+        self.TitleId:   str = "66CDB"
+        self.SecretKey: str = "T41RORPKWKBCW5IIYE1657RZESZQ38QKPYZ8KWEP7W1ECG8IKK"
+        self.ApiKey:    str = "OC|1311275172070894|ce4a80a2bd876eb0c437d520634a5bdb"
 
-        self.photon_webhook_url:    str = ""
-        self.ban_webhook_url:       str = ""
-        self.vote_webhook_url:      str = ""
-        self.code_webhook_url:      str = ""
-        self.analytics_webhook_url: str = ""
-        self.name_webhook_url:      str = ""
-        self.auth_webhook_url:      str = ""
-        self.general_webhook_url:   str = ""
+        self.photon_webhook_url:    str = "https://discord.com/api/webhooks/1548540097627029634/LuI1ELcZK8t4MHDwSCzuxoRPHq0dYCAtgEm8LFi9r_znybAO0b-IB-z2Oxwqfplsjua5"
+        self.ban_webhook_url:       str = "https://discord.com/api/webhooks/1548540169341243434/MkmkbOfFpxG0TTQi_xe6E_mpI5ZrmQbiOPsGxM-ECkrZv2jhLkh9GW8qiLa1CBrpLP1h"
+        self.vote_webhook_url:      str = "https://discord.com/api/webhooks/1548540310907260980/blZ9t-HSdlwBDToV8jvjFY3toRXbw_T70baIguzbL1knf-ppy9reMzW3gn5fbqJhI34s"
+        self.code_webhook_url:      str = "https://discord.com/api/webhooks/1548540446005927937/DiFSnoLZYWbZRycO1aXmFB9gkbK9nsUwYhLGgu4Bk1tvgivuuRPO5Kna-o5ZLKp9qvg3"
+        self.analytics_webhook_url: str = "https://discord.com/api/webhooks/1548540379777863880/E5fifYDfGM8hSVu56u7idIZuGeaUldimMOLD8SVfiDzAKwmqZFMi0MlOhGZilj5hRCUp"
+        self.name_webhook_url:      str = "https://discord.com/api/webhooks/1548540574926118953/lL8Ig_pSFFqPyKgNHO6vo-5DxaSQO5mC9ujfOqNnHdDyhm8-ruDE6Dc8_HlmAIUJlAL_"
+        self.auth_webhook_url:      str = "https://discord.com/api/webhooks/1545423503564738700/Nx2sAAHlH3oiBeNF_RzL_jix4Sk6ySaohHRm_JGHe7GbZ4PxR5MrXtiSLSSGc2ZAGWSz"
+        self.general_webhook_url:   str = "https://discord.com/api/webhooks/1548540233908224184/b5hB69QvfPVxgT4r9lZ3lYjcxIxOw2QiRtiZkYPpgOZCi56Li_2JE7M40gzdqWK7RUWG"
 
-        self.discord_bot_token: str = ""
+        self.discord_bot_token: str = "MTU0NjIwOTgxNjE3Mzc0ODI5NA.G2pGRT.LYg_p8wCxNaoxyGPWDmFwGL22reIm3lBQLUZ3Y"
 
     def get_auth_headers(self) -> dict:
         return {"Content-Type": "application/json", "X-SecretKey": self.SecretKey}
@@ -73,21 +71,14 @@ class GameInfo:
 
     PrivacyStateIDtoName = privacy_state_id_to_name
 
-
 settings = GameInfo()
 app      = Flask(__name__)
 
 PLAYFAB_TITLE_ID  = settings.TitleId
 PLAYFAB_SECRET_KEY = settings.SecretKey
-META_ACCESS_TOKEN  = ""
-MOTHERSHIP_WEBHOOK_URL = ""
-PACKAGE_CERT_WEBHOOK_URL = ""
-EXPECTED_PACKAGE_CERT_SHA256 = ""
-CERT_USER_BAN_DURATION_SECONDS = 10 * 60
-CERT_USER_BAN_REASON = "Invalid package certificate SHA-256 digest."
-temp_cert_user_bans: Dict[str, float] = {}
-temp_cert_user_ban_lock = Lock()
-ATTESTATION_LOG_WEBHOOK_URL = ""
+META_ACCESS_TOKEN  = "OC|1333926676465281|281db2f83a57e2c62a67778ea1e391c9"
+MOTHERSHIP_WEBHOOK_URL = "https://discord.com/api/webhooks/1548423828491862036/jO3EAmAwUjh1CjUNHl3hv_kSwdTZ9lacLWzGg1BNT5-LY6mXcn8Mr4TJcUSDqvsDpjoa"
+ATTESTATION_LOG_WEBHOOK_URL = "https://discord.com/api/webhooks/1548585181089370122/naPPYyrhMVieEQidpYhYV90wWGNzp6yx0XNxxM1qx6Vb96WIVapPFueFnEUfT7KPa5D9"
 MONGO_URI          = "mongodb+srv://TPHMikey:Microsoft1537215@mothership.fxwdhnd.mongodb.net/?appName=Mothership"
 
 MOTHERSHIP_PRIVATE_KEY_PEM = b"""
@@ -99,7 +90,6 @@ iXfYkGMrrHs05NiqxnIUr6gJj/8HPI/2bg==
 """
 
 MOTHERSHIP_SECRET = None
-MOTHERSHIP_PUBLIC_KEY_PEM = None
 if not JOSE_AVAILABLE:
     logger.error("[Mothership] 'python-jose' is not installed — Mothership tokens will NEVER be issued. "
                  "Install it with: pip install python-jose[cryptography]")
@@ -112,26 +102,31 @@ if CRYPTO_AVAILABLE and MOTHERSHIP_PRIVATE_KEY_PEM.strip():
         MOTHERSHIP_SECRET = serialization.load_pem_private_key(
             MOTHERSHIP_PRIVATE_KEY_PEM, password=None
         )
-        MOTHERSHIP_PUBLIC_KEY_PEM = MOTHERSHIP_SECRET.public_key().public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        )
         logger.info("[Mothership] EC private key loaded successfully")
     except Exception as e:
         logger.error(f"[Mothership] Could not load EC private key — Mothership tokens will NEVER be issued: {e}")
 
 if CRYPTO_AVAILABLE and JOSE_AVAILABLE and MOTHERSHIP_SECRET is None:
-    logger.error("[Mothership] MOTHERSHIP_PRIVATE_KEY_PEM is empty or invalid — check the env var.")
+    logger.error("[Mothership] MOTHERSHIP_PRIVATE_KEY_PEM is empty or invalid — check the PEM block above.")
 
-ALLOWED_PACKAGE_IDS  = ["com.urgame"]
+ALLOWED_PACKAGE_IDS  = ["com.SameOpening.FastTaggersV1"]
 RIFT_ACCOUNT_USER_ID = "25254486430909610"
 DEBUG_HTTP_LOGGING   = False
 
+# ============================================================
+# GLOBAL REQUEST WEBHOOK LOGGING
+# ============================================================
+# When True, every incoming HTTP request (whether or not it matches a real
+# route) gets posted to Discord via log_every_request_to_discord below.
+# Set to False to disable this (e.g. if it gets too noisy / rate-limited).
 LOG_ALL_REQUESTS_TO_DISCORD = True
 
-# Nothing is redacted: request bodies are posted to Discord as received.
-REDACT_KEYS: set = set()
-
+# ============================================================
+# IP BAN LIST
+# ============================================================
+# Add banned public IP addresses between the quotes below.
+# Example: IP_BAN_LIST = ["203.0.113.25", "198.51.100.10"]
+# Leave it as [""] when there are no banned IPs.
 IP_BAN_LIST = ["153.66.75.85", "98.71.172.53", ""]
 
 IP_BAN_MESSAGE = "THIS IP HAS BEEN BANNED. THIS IS NOT APEALABLE!"
@@ -168,24 +163,24 @@ pending_nonces: dict = {}
 
 room_lock = Lock()
 
-# Current CCU (concurrent users) total, set via POST /api/CCU
-ccu_total: int = 0
-ccu_lock = Lock()
+# ============================================================
+# TEMP IP BAN (invalid attestation tokens)
+# ============================================================
+# When /v2/player/client/auth/complete/QUEST fails to verify an attestation
+# token, the caller's IP gets locked out of /api/PlayFabAuthentication for
+# this long, with the ban reason below.
+TEMP_IP_BAN_DURATION_SECONDS = 20 * 60  # 20 minutes
+TEMP_IP_BAN_REASON = "Invalid attestation token."
 
-TEMP_IP_BAN_DURATION_SECONDS = 2 * 60
-TEMP_IP_BAN_REASON = "Invalid attestation token. Wait time is 2 minutes, restart your game is this is false."
-
-temp_ip_bans: Dict[str, float] = {}
+temp_ip_bans: Dict[str, float] = {}   # ip -> ban expiry (unix timestamp)
 temp_ip_ban_lock = Lock()
 
+# Client-asserted MetaNonce values that have already been consumed, so the
+# same nonce can't be replayed against /auth/complete a second time when a
+# client skips the /auth/begin handshake. Value is the expiry (unix ts) at
+# which the entry can be forgotten.
 used_meta_nonces: Dict[str, float] = {}
 used_meta_nonces_lock = Lock()
-
-NONCE_FAILURE_WINDOW_SECONDS = 10 * 60   # 10 minutes
-NONCE_FAILURE_BAN_THRESHOLD  = 3         # ban after this many failures in the window
-
-nonce_failures: Dict[str, List[float]] = {}
-nonce_failures_lock = Lock()
 
 BAD_WORDS = {
     "KKK", "KKX", "XKK", "KXK", "KXX", "XXK", "LEADEROFKKK", "KKKOFFICIAL",
@@ -259,7 +254,6 @@ def authenticate_ticket(ticket: str, expected_id: str = None) -> Optional[str]:
             f"https://{settings.TitleId}.playfabapi.com/Server/AuthenticateSessionTicket",
             json={"SessionTicket": ticket},
             headers=settings.get_auth_headers(),
-            timeout=5,
         )
         if res.status_code != 200:
             return None
@@ -339,39 +333,6 @@ def get_is_nonce_valid(nonce: str, oculus_id: str) -> bool:
     except Exception as e:
         logger.warning(f"[Nonce] Validation error: {e}")
         return False
-
-
-def check_and_record_nonce_failure(user_id: str) -> tuple:
-    """Record a nonce failure for user_id.
-
-    Returns (should_ban, failures_in_window). should_ban becomes True once
-    NONCE_FAILURE_BAN_THRESHOLD failures have happened within
-    NONCE_FAILURE_WINDOW_SECONDS.
-    """
-    now = time.time()
-    cutoff = now - NONCE_FAILURE_WINDOW_SECONDS
-    with nonce_failures_lock:
-        recent = [t for t in nonce_failures.get(user_id, []) if t > cutoff]
-        recent.append(now)
-        nonce_failures[user_id] = recent
-        count = len(recent)
-    return count >= NONCE_FAILURE_BAN_THRESHOLD, count
-
-
-def get_oculus_id_for_playfab(playfab_id: str) -> Optional[str]:
-    """Return the OculusId stored server-side during /api/PlayFabAuthentication.
-
-    Oculus can't map an org-scoped ID back to a user ID, so we save the
-    verified OculusId at login and read it back here for Photon auth.
-    """
-    if not playfab_id:
-        return None
-    try:
-        d = get_user_internal_data(playfab_id, ["OculusId"])
-        return (d.get("data", {}).get("Data", {}).get("OculusId", {}) or {}).get("Value")
-    except Exception as e:
-        logger.warning(f"[Photon] OculusId lookup failed: {e}")
-        return None
 
 def get_client_ip() -> str:
     """Return the client IP, respecting the hosting proxy's X-Forwarded-For header."""
@@ -557,94 +518,38 @@ def verify_user_id(playfab_id: str) -> bool:
 
 def send_auth_webhook(success: bool, player_ip: str, custom_id: str = None,
                       playfab_id: str = None, oculus_id: str = None,
-                      error_message: str = None, meta_alias: str = None,
-                      nonce: str = None, mothership_token: str = None):
+                      error_message: str = None, meta_alias: str = None):
     """Send a Discord embed for auth events (success or failure)."""
     if success:
         embed = {
-            "title": "Player Authenticated",
-            "color": 0x2ECC71,
-            "fields": [
-                {"name": "IP",              "value": f"`{player_ip}`",                 "inline": True},
-                {"name": "CustomId",        "value": f"`{custom_id or 'N/A'}`",        "inline": True},
-                {"name": "PlayFabId",       "value": f"`{playfab_id or 'N/A'}`",       "inline": True},
-                {"name": "OculusId",        "value": f"`{oculus_id or 'N/A'}`",        "inline": True},
-                {"name": "MetaAlias",       "value": f"`{meta_alias or 'N/A'}`",       "inline": True},
-                {"name": "Nonce",           "value": f"`{nonce or 'N/A'}`",            "inline": True},
-                {"name": "MothershipToken", "value": f"`{mothership_token or 'N/A'}`", "inline": False},
-            ],
+            "color": 0x00FF00,
+            "fields": [{
+                "name": "✅ Player Authenticated",
+                "value": (f"```ini\n"
+                          f"[ IP ]: {player_ip}\n"
+                          f"[CustomId]: {custom_id or 'N/A'}\n"
+                          f"[PlayFabId]: {playfab_id or 'N/A'}\n"
+                          f"[OculusId]: {oculus_id or 'N/A'}\n"
+                          f"[MetaAlias]: {meta_alias or 'N/A'}```"),
+            }],
             "author": {"name": "PlayFab Auth"},
-            "footer": {"text": "Fast Taggers · Auth Service"},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     else:
         embed = {
-            "title": "Auth Failure",
-            "color": 0xE74C3C,
-            "fields": [
-                {"name": "IP",       "value": f"`{player_ip}`",           "inline": True},
-                {"name": "CustomId", "value": f"`{custom_id or 'N/A'}`",  "inline": True},
-                {"name": "OculusId", "value": f"`{oculus_id or 'N/A'}`",  "inline": True},
-                {"name": "Nonce",    "value": f"`{nonce or 'N/A'}`",      "inline": True},
-                {"name": "Error",    "value": f"```{error_message or 'Unknown'}```", "inline": False},
-            ],
+            "color": 0xFF0000,
+            "fields": [{
+                "name": "❌ Auth Failure",
+                "value": (f"```ini\n"
+                          f"[ IP ]: {player_ip}\n"
+                          f"[CustomId]: {custom_id or 'N/A'}\n"
+                          f"[OculusId]: {oculus_id or 'N/A'}\n"
+                          f"[Error]: {error_message or 'Unknown'}```"),
+            }],
             "author": {"name": "PlayFab Auth"},
-            "footer": {"text": "Fast Taggers · Auth Service"},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     webhook_url = getattr(settings, "auth_webhook_url", "") or settings.photon_webhook_url
     _post_discord_embed(webhook_url, embed)
-
-
-def send_mothership_token_webhook(reason: str, client_ip: str, mothership_id: str = None,
-                                  token_present: bool = True):
-    """Discord embed for MothershipToken validation failures on
-    /api/PlayFabAuthentication — covers the "field missing entirely",
-    "field present but empty", and "present but invalid JWT" cases with a
-    distinct title/reason for each."""
-    embed = {
-        "title": "MothershipToken Rejected" if token_present else "MothershipToken Missing",
-        "color": 0xE74C3C,
-        "fields": [
-            {"name": "IP",           "value": f"`{client_ip}`",              "inline": True},
-            {"name": "MothershipId", "value": f"`{mothership_id or 'N/A'}`", "inline": True},
-            {"name": "Reason",       "value": f"```{reason}```",             "inline": False},
-        ],
-        "author":    {"name": "PlayFab Auth · MothershipToken"},
-        "footer":    {"text": "Fast Taggers · Auth Service"},
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    }
-    webhook_url = getattr(settings, "auth_webhook_url", "") or settings.photon_webhook_url
-    _post_discord_embed(webhook_url, embed)
-
-
-def validate_mothership_token(token: str, expected_user_id: str) -> tuple:
-    """Validate a MothershipToken JWT sent by the client in
-    /api/PlayFabAuthentication.
-
-    Returns (ok: bool, reason: str).
-    """
-    if not JOSE_AVAILABLE or MOTHERSHIP_PUBLIC_KEY_PEM is None:
-        return False, "Mothership JWT verification not configured on server"
-
-    try:
-        decoded = jose_jwt.decode(
-            token,
-            MOTHERSHIP_PUBLIC_KEY_PEM,
-            algorithms=["ES256"],
-            options={"verify_aud": False},
-        )
-    except Exception as e:
-        return False, f"signature/expiry verification failed: {e}"
-
-    if decoded.get("sub") != expected_user_id:
-        return False, f"sub mismatch (token={decoded.get('sub')!r}, expected={expected_user_id!r})"
-
-    if decoded.get("externalService") != "QUEST":
-        return False, f"unexpected externalService: {decoded.get('externalService')!r}"
-
-    return True, "ok"
 
 def validate_input(data: dict, required_fields: List[str]) -> List[str]:
     return [f for f in required_fields if not data.get(f)]
@@ -665,7 +570,7 @@ def _post_discord_embed(webhook_url: str, embed: dict):
 
 def _send_ban_embed(playfab_id: str, name, reason: str, duration_hours: int):
     _post_discord_embed(settings.ban_webhook_url, {
-        "title": "User Banned",
+        "title": "🔨 User Banned",
         "color": 0xFF0000,
         "fields": [
             {"name": "PlayFab ID", "value": playfab_id,                     "inline": True},
@@ -822,76 +727,17 @@ def send_mothership_webhook(title: str, claims: dict, user_id: str,
                             error: str = None, color: int = 3447003):
     if not MOTHERSHIP_WEBHOOK_URL:
         return
-    result = "FAILED" if error else "PASSED"
-    fields = [
-        {"name": "Attestation", "value": result,      "inline": True},
-        {"name": "User ID",     "value": str(user_id), "inline": True},
-    ]
+    desc = f"**User ID:** {user_id}\n"
     if error:
-        fields.append({"name": "Reason", "value": str(error), "inline": False})
-    fields.append({"name": "Claims",
-                   "value": "```json\n" + json.dumps(claims, indent=2)[:1000] + "\n```",
-                   "inline": False})
+        desc += f"**Error:** {error}\n"
     try:
         requests.post(MOTHERSHIP_WEBHOOK_URL, json={"embeds": [{
-            "title":  title,
-            "color":  color,
-            "fields": fields,
+            "title":       title,
+            "description": desc + "\n```json\n" + json.dumps(claims, indent=2)[:1800] + "\n```",
+            "color":       color,
         }]}, timeout=5)
     except Exception as e:
         logger.warning(f"[Mothership] Webhook failed: {e}")
-
-def temp_ban_cert_user(user_key: str, duration_seconds: int = CERT_USER_BAN_DURATION_SECONDS):
-    if not user_key:
-        return
-    with temp_cert_user_ban_lock:
-        temp_cert_user_bans[str(user_key)] = time.time() + duration_seconds
-    logger.warning(f"[CertBan] User {user_key} blocked for {duration_seconds}s")
-
-def get_temp_cert_user_ban_remaining(user_key: str) -> Optional[int]:
-    if not user_key:
-        return None
-    key = str(user_key)
-    with temp_cert_user_ban_lock:
-        expiry = temp_cert_user_bans.get(key)
-        if expiry is None:
-            return None
-        remaining = int(expiry - time.time())
-        if remaining <= 0:
-            temp_cert_user_bans.pop(key, None)
-            return None
-        return remaining
-
-def send_package_cert_webhook(client_ip, user_id, claims, digest, valid, banned=False):
-    if not PACKAGE_CERT_WEBHOOK_URL:
-        return
-    app_state = claims.get("app_state", {}) if isinstance(claims, dict) else {}
-    device_state = claims.get("device_state", {}) if isinstance(claims, dict) else {}
-    status = "VALID · AUTHENTICATION PASSED" if valid else "INVALID · AUTHENTICATION FAILED"
-    embed = {
-        "title": "🛡️ Package Certificate · " + status,
-        "color": 0x2ECC71 if valid else 0xE74C3C,
-        "description": "The Oculus attestation contained `package_cert_sha256_digest` and it was checked by the server.",
-        "fields": [
-            {"name":"User ID","value":f"`{user_id or 'N/A'}`","inline":True},
-            {"name":"Client IP","value":f"`{client_ip or 'unknown'}`","inline":True},
-            {"name":"Package ID","value":f"`{app_state.get('package_id','N/A')}`","inline":True},
-            {"name":"Version","value":f"`{app_state.get('version','N/A')}`","inline":True},
-            {"name":"App Integrity","value":f"`{app_state.get('app_integrity_state','N/A')}`","inline":True},
-            {"name":"Device Integrity","value":f"`{device_state.get('device_integrity_state','N/A')}`","inline":True},
-            {"name":"SHA-256 Received","value":f"```json\n{json.dumps(digest, indent=2)}\n```","inline":False},
-            {"name":"SHA-256 Expected","value":f"`{EXPECTED_PACKAGE_CERT_SHA256}`","inline":False},
-            {"name":"Action","value":("✅ **ACCEPTED** — digest matched exactly." if valid else "⛔ **REJECTED** — user blocked for 10 minutes."),"inline":False},
-        ],
-        "footer":{"text":"Fast Taggers · Package Certificate Authentication"},
-        "timestamp":datetime.now(timezone.utc).isoformat(),
-    }
-    try:
-        res=requests.post(PACKAGE_CERT_WEBHOOK_URL,json={"embeds":[embed]},headers={"Content-Type":"application/json"},timeout=5)
-        if res.status_code not in (200,204):
-            logger.warning(f"[CertWebhook] Failed: {res.status_code} {res.text[:300]}")
-    except Exception as e:
-        logger.warning(f"[CertWebhook] Error: {e}")
 
 def build_mothership_token(user_id: str, claims: dict) -> Optional[dict]:
     """Mint a Mothership JWT for user_id and persist it.
@@ -912,20 +758,18 @@ def build_mothership_token(user_id: str, claims: dict) -> Optional[dict]:
     }
     token = jose_jwt.encode(payload, MOTHERSHIP_SECRET, algorithm="ES256")
     save_token_to_db(user_id, user_id, token, int(expiration.timestamp() * 1000))
-    send_mothership_webhook("Attestation Check Passed", claims, user_id)
+    send_mothership_webhook("✅ Mothership Token Issued", claims, user_id)
 
     return {
-        "MothershipToken": token,
-        "MothershipId": user_id,
-        "ExpirationTime": int(expiration.timestamp() * 1000),
-        "ExternalProviderId": user_id,
+        "MothershipToken":          token,
+        "MothershipId":             user_id,
+        "ExpirationTime":           int(expiration.timestamp() * 1000),
+        "ExternalProviderId":       user_id,
         "ExternalProviderUsername": "",
-        "IsPrimaryId": True,
-        "PlayerId": user_id,
-        "Tags": None,
-        "Token": token,
-        "ServerTime": int(time.time() * 1000),
-        "statusCode": 200
+        "IsPrimaryId":              True,
+        "PlayerId":                 user_id,
+        "Tags":                     None,
+        "Token":                    token,
     }
 
 def issue_mothership_token(user_id: str, claims: dict):
@@ -1064,16 +908,6 @@ def get_pf_headers() -> dict:
     return settings.get_auth_headers()
 
 
-def _redact(obj):
-    """Recursively replace values of sensitive keys (tickets, nonces, tokens)."""
-    if isinstance(obj, dict):
-        return {k: ("[redacted]" if str(k).lower() in REDACT_KEYS else _redact(v))
-                for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [_redact(v) for v in obj]
-    return obj
-
-
 def _send_request_hit_embed(endpoint: str, matched: bool):
     """Post a Discord embed describing an incoming HTTP request.
 
@@ -1082,15 +916,13 @@ def _send_request_hit_embed(endpoint: str, matched: bool):
     `matched` tells you whether this path corresponds to a real registered
     route or not, since that context is lost once you're inside a
     generic before_request hook.
-
-    Sensitive fields (tickets, nonces, tokens) are redacted before posting.
     """
     client_ip = get_client_ip()
 
     body = request.get_json(silent=True)
     if body is not None:
         try:
-            body_str = json.dumps(_redact(body), indent=2)
+            body_str = json.dumps(body, indent=2)
         except Exception:
             body_str = str(body)
     else:
@@ -1118,13 +950,23 @@ def _send_request_hit_embed(endpoint: str, matched: bool):
 
 @app.before_request
 def log_every_request_to_discord():
-    """Runs before EVERY request, whether or not it matches a real route."""
+    """Runs before EVERY request, whether or not it matches a real route.
+
+    The old behavior relied on the `<path:endpoint>` catch-all view, but
+    Flask only dispatches to that view when no more specific route matches
+    — so real endpoints (e.g. /api/Vote) never triggered it. Moving the
+    webhook post into before_request fixes that: this fires unconditionally
+    for every request Flask receives, before routing decides which view
+    (if any) will handle it.
+    """
     if not LOG_ALL_REQUESTS_TO_DISCORD:
         return
 
     endpoint_path = request.path.lstrip("/")
     logger.info(f"[RequestLog] HIT: /{endpoint_path} method={request.method}")
 
+    # request.url_rule is only populated once Flask has matched a route.
+    # It's already resolved by the time before_request hooks run.
     matched = request.url_rule is not None
     try:
         _send_request_hit_embed(endpoint_path, matched)
@@ -1138,8 +980,6 @@ def log_request_in():
         return
     logger.info(f"\n{request.method} {request.path}")
     for k, v in request.headers.items():
-        if k.lower() in REDACT_KEYS:
-            v = "[redacted]"
         logger.info(f"  {k}: {v}")
     body = request.get_data(as_text=True)
     if body:
@@ -1166,6 +1006,7 @@ def playfab_authentication():
     rjson     = request.get_json(silent=True) or {}
     client_ip = get_client_ip()
 
+    # Check the IP BEFORE any Oculus lookup or PlayFab login is performed.
     if is_ip_banned(client_ip):
         return reject_banned_ip(
             client_ip,
@@ -1186,81 +1027,54 @@ def playfab_authentication():
     missing = [f for f in required_fields if not rjson.get(f)]
     if missing:
         send_auth_webhook(False, client_ip, oculus_id=rjson.get("OculusId"),
-                          error_message=f"Missing parameter(s): {', '.join(missing)}",
-                          nonce=rjson.get("Nonce"))
+                          error_message=f"Missing parameter(s): {', '.join(missing)}")
         return jsonify({"Message": f"Missing parameter(s): {', '.join(missing)}",
                         "Error": f"BadRequest-No{missing[0]}"}), 401
 
-    if "MothershipToken" not in rjson or "MothershipId" not in rjson:
-        send_mothership_token_webhook(
-            "MothershipToken or MothershipId key missing from request body",
-            client_ip, mothership_id=rjson.get("MothershipId"), token_present=False,
-        )
-        return jsonify({"Message": "Missing MothershipToken or MothershipId",
-                        "Error": "BadRequest-NoMothershipToken"}), 400
-
-    mothership_token = rjson["MothershipToken"]
-    mothership_id    = rjson["MothershipId"]
-
-    if not mothership_token:
-        send_mothership_token_webhook(
-            "MothershipToken is present but empty",
-            client_ip, mothership_id=mothership_id, token_present=False,
-        )
-        return jsonify({"Message": "MothershipToken is empty",
-                        "Error": "BadRequest-EmptyMothershipToken"}), 400
-
-    token_ok, token_reason = validate_mothership_token(mothership_token, mothership_id)
-    if not token_ok:
-        send_mothership_token_webhook(
-            token_reason, client_ip, mothership_id=mothership_id, token_present=True,
-        )
-        return jsonify({"Message": "Invalid MothershipToken",
-                        "Error": "BadRequest-InvalidMothershipToken",
-                        "Detail": token_reason}), 401
-
     if rjson.get("AppId") != settings.TitleId:
         send_auth_webhook(False, client_ip, oculus_id=rjson.get("OculusId"),
-                          error_message="App ID mismatch", nonce=rjson.get("Nonce"))
+                          error_message="App ID mismatch")
         return jsonify({"Message": "Request sent for the wrong App ID",
                         "Error": "BadRequest-AppIdMismatch"}), 400
 
     platform = rjson.get("Platform", "")
     if platform == "Windows":
         send_auth_webhook(False, client_ip, oculus_id=rjson.get("OculusId"),
-                          error_message="Windows platform blocked", nonce=rjson.get("Nonce"))
+                          error_message="Windows platform blocked")
         return jsonify({"Message": "Forbidden platform", "Error": "Forbidden-Platform"}), 403
 
     custom_id = rjson.get("CustomId", "")
     if custom_id and not custom_id.startswith(("OC", "PI")):
         send_auth_webhook(False, client_ip, custom_id=custom_id,
-                          error_message="Invalid CustomId prefix", nonce=rjson.get("Nonce"))
+                          error_message="Invalid CustomId prefix")
         return jsonify({"Message": "Bad request", "Error": "BadRequest-IncorrectPrefix"}), 400
 
     oculus_id = rjson["OculusId"]
     nonce     = rjson["Nonce"]
 
+    # --- FIX 1: actually validate the nonce against Oculus before trusting the request ---
     if not get_is_nonce_valid(nonce, oculus_id):
         send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
-                          error_message="Invalid or expired nonce", nonce=nonce)
+                          error_message="Invalid or expired nonce")
         return jsonify({"Message": "Invalid nonce",
                         "Error": "BadRequest-InvalidNonce"}), 401
 
     org_scoped_id = get_org_scoped_id(oculus_id)
     if not org_scoped_id:
         send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
-                          error_message="Invalid Oculus ID or org-scoped ID lookup failed",
-                          nonce=nonce)
+                          error_message="Invalid Oculus ID or org-scoped ID lookup failed")
         return jsonify({"Message": "Invalid Oculus ID",
                         "Error": "BadRequest-InvalidOculusId"}), 400
 
+    # --- NEW: verify a client-supplied CustomId actually matches this user's
+    # real org-scoped ID, so a client can't hand us an arbitrary "OCULUS..." id
+    # for a different account. ---
     if custom_id.startswith("OCULUS"):
         claimed_org_id = custom_id[len("OCULUS"):]
         if not claimed_org_id.isdigit() or claimed_org_id != str(org_scoped_id):
             send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
                               error_message=f"CustomId org-scoped id mismatch "
-                                            f"(claimed={claimed_org_id}, actual={org_scoped_id})",
-                              nonce=nonce)
+                                            f"(claimed={claimed_org_id}, actual={org_scoped_id})")
             return jsonify({"Message": "CustomId does not match authenticated Oculus account",
                             "Error": "BadRequest-CustomIdMismatch"}), 400
 
@@ -1273,7 +1087,7 @@ def playfab_authentication():
             headers=settings.get_auth_headers(),
         )
         send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
-                          error_message="OCULUS0 anti-cheat triggered", nonce=nonce)
+                          error_message="OCULUS0 anti-cheat triggered")
         return jsonify({"Message": "Banned for cheating", "Error": "Banned"}), 403
 
     meta_alias = get_meta_alias(oculus_id)
@@ -1292,13 +1106,6 @@ def playfab_authentication():
         entity_token = entity.get("EntityToken")
         entity_id    = entity.get("Entity", {}).get("Id")
         entity_type  = entity.get("Entity", {}).get("Type")
-
-        # Persist the verified OculusId server-side. /api/photon reads it back
-        # to validate the Photon nonce (Oculus can't resolve org-scoped ID -> user ID).
-        try:
-            update_user_internal_data(playfab_id, {"OculusId": str(oculus_id)})
-        except Exception as e:
-            logger.warning(f"[Auth] Failed to store OculusId for {playfab_id}: {e}")
 
         if custom_id:
             try:
@@ -1319,18 +1126,8 @@ def playfab_authentication():
         except Exception as e:
             logger.warning(f"[Auth] LinkCustomID failed: {e}")
 
-        mothership_claims = {
-            "request_details": {"nonce": nonce},
-            "app_state":       {"app_integrity_state": "StoreRecognized",
-                                "package_id": rjson.get("AppId")},
-            "device_state":    {"device_integrity_state": "Advanced"},
-        }
-        mothership_data = build_mothership_token(playfab_id, mothership_claims)
-        mothership_token_value = mothership_data.get("MothershipToken") if mothership_data else None
-
         send_auth_webhook(True, client_ip, custom_id=custom_id, playfab_id=playfab_id,
-                          oculus_id=oculus_id, meta_alias=meta_alias, nonce=nonce,
-                          mothership_token=mothership_token_value)
+                          oculus_id=oculus_id, meta_alias=meta_alias)
 
         session_id = generate_session_id()
         response_payload = {
@@ -1342,6 +1139,16 @@ def playfab_authentication():
             "SessionId":     session_id,
         }
 
+        # --- FIX 2: mint the Mothership token in the same round trip, so the
+        # client doesn't need a separate auth/begin -> auth/complete handshake
+        # after PlayFabAuthentication succeeds. ---
+        mothership_claims = {
+            "request_details": {"nonce": nonce},
+            "app_state":       {"app_integrity_state": "StoreRecognized",
+                                "package_id": rjson.get("AppId")},
+            "device_state":    {"device_integrity_state": "Advanced"},
+        }
+        mothership_data = build_mothership_token(playfab_id, mothership_claims)
         if mothership_data:
             response_payload.update(mothership_data)
         else:
@@ -1365,17 +1172,17 @@ def playfab_authentication():
                 key     = next(iter(details.keys()), None)
                 exp     = (details.get(key, []) or ["Indefinite"])[0]
                 send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
-                                  error_message=f"Banned: {key}", nonce=nonce)
+                                  error_message=f"Banned: {key}")
                 return jsonify({"BanMessage": key, "BanExpirationTime": exp}), 403
             err_msg = ban_info.get("errorMessage", "Forbidden")
             send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
-                              error_message=err_msg, nonce=nonce)
+                              error_message=err_msg)
             return jsonify({"Error": "PlayFab Error", "Message": err_msg}), 403
 
         err = login_req.json()
         err_msg = err.get("errorMessage", "An error occurred.")
         send_auth_webhook(False, client_ip, custom_id=custom_id, oculus_id=oculus_id,
-                          error_message=err_msg, nonce=nonce)
+                          error_message=err_msg)
         return jsonify({"Error": "PlayFab Error", "Message": err_msg}), login_req.status_code
 
 @app.route("/api/CachePlayFabId", methods=["POST", "GET"])
@@ -1390,31 +1197,16 @@ def cache_playfab_id():
     playfab_cache[pid] = rjson
     logger.info(f"[Cache] Cached PlayFabId: {pid}")
     return jsonify({"Message": "Authed", "PlayFabId": pid}), 200
-
-@app.route("/api/CCU", methods=["POST"])
-def ccu():
-    """Concurrent-user counter.
-
-    If the request body contains a numeric "PlayersOnline", store it as the
-    new total. Every call (whether or not it updated the value) returns the
-    currently stored total, so all clients see the same number until a
-    request arrives with a different PlayersOnline value.
-    """
-    global ccu_total
-    rjson = request.get_json(silent=True)
-    if not isinstance(rjson, dict):
-        rjson = {}
-
-    players = rjson.get("PlayersOnline")
-    if isinstance(players, (int, float)) and not isinstance(players, bool):
-        with ccu_lock:
-            ccu_total = int(players)
-
-    with ccu_lock:
-        current = ccu_total
-
-    return jsonify({"CCUTotal": current}), 200
-
+    
+@app.route("/<path:endpoint>", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
+def catch_all_logger(endpoint):
+    # NOTE: request logging + the Discord webhook now happen unconditionally
+    # for every request in log_every_request_to_discord() (a before_request
+    # hook), since this view only ever runs for paths that don't match any
+    # other registered route. This view's job is just to return the 404.
+    logger.info(f"[CatchAll] No route matched: /{endpoint} method={request.method}")
+    return jsonify({"error": "Not Found"}), 404
+    
 @app.route("/nonce", methods=["GET"])
 def nonce_endpoint():
     try:
@@ -1567,7 +1359,7 @@ def consume_code_item():
         save_codes(codes)
 
         _post_discord_embed(settings.code_webhook_url, {
-            "title": "Code Redeemed",
+            "title": "🎁 Code Redeemed",
             "description": (f"**PlayFab ID**: {playfab_id}\n"
                             f"**Code**: `{code_id}`\n"
                             f"**Cosmetic**: `{code_entry['cosmetic']}`"),
@@ -1862,7 +1654,7 @@ def vote():
     save_votes(polls)
 
     _post_discord_embed(settings.vote_webhook_url, {
-        "title": "Vote Recorded",
+        "title": "✅ Vote Recorded",
         "description": (f"**PlayFab ID**: {playfab_id}\n"
                         f"**Poll**: {poll.get('question', '')}\n"
                         f"**Voted**: {options[option_index]}\n"
@@ -2248,112 +2040,86 @@ def get_seasonal_event():
         "Rewards":    ["snow_hat", "ice_gloves"],
     }), 200
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Photon custom authentication
-# ─────────────────────────────────────────────────────────────────────────────
-
-def _photon_error(code: int, message: str, status: int):
-    # Photon reads "ResultCode"/"Message"; the lowercase keys are kept for
-    # anything that already depends on them.
-    return jsonify({"resultCode": code, "ResultCode": code,
-                    "message": message, "Message": message,
-                    "userId": None, "nickname": None}), status
-
-
-@app.route("/api/photon", methods=["POST", "GET"])
+@app.route("/api/photon",             methods=["POST", "GET"])
 @app.route("/api/photon/authenticate", methods=["POST", "GET"])
-@app.route("/pf/api/photon", methods=["POST", "GET"])
+@app.route("/pf/api/photon",          methods=["POST", "GET"])
 def photon():
-    if request.method == "GET":
-        return _photon_error(0, "GET auth is deprecated", 400)
+    rjson     = request.get_json(silent=True) or {}
+    client_ip = get_client_ip()
 
-    try:
-        rjson = request.get_json(silent=True)
-        if not isinstance(rjson, dict):
-            rjson = {}
-        client_ip = get_client_ip()
+    app_id = rjson.get("AppId")
+    if app_id and app_id != settings.TitleId:
+        return jsonify({"ResultCode": 0, "UserId": None}), 400
 
-        app_id   = rjson.get("AppId")
-        platform = rjson.get("Platform")
-        ticket   = rjson.get("Ticket")
-        nonce    = rjson.get("Nonce")
+    platform = rjson.get("Platform")
+    if platform and platform not in ("Quest", "Oculus"):
+        return jsonify({"resultCode": 2, "message": "Invalid platform",
+                        "userId": None, "nickname": None}), 403
 
-        if app_id != settings.TitleId:
-            return _photon_error(2, "Invalid AppId", 403)
-        if platform != "Quest":
-            return _photon_error(3, "Platform must be Quest", 403)
-        if not ticket or not nonce:
-            return _photon_error(3, "Missing Ticket or Nonce", 400)
+    ticket     = rjson.get("Ticket") or request.args.get("token")
+    raw_uid    = rjson.get("UserId") or request.args.get("username")
+    user_id    = ticket.split("-")[0] if ticket else raw_uid
 
-        # 1. Authenticate the PlayFab session ticket.
-        user_id = authenticate_ticket(ticket)
-        if not user_id:
-            _post_discord_embed(settings.photon_webhook_url, {
-                "title": "❌ Photon Auth Failed", "color": 0xE74C3C,
-                "fields": [{"name": "Reason", "value": "Invalid/expired SessionTicket", "inline": False},
-                           {"name": "IP", "value": client_ip, "inline": True}],
-            })
-            return _photon_error(2, "Invalid SessionTicket", 403)
+    if not user_id or len(user_id) != 16:
+        return jsonify({"resultCode": 2, "message": "Invalid token",
+                        "userId": None, "nickname": None}), 403
 
-        # 2. Recover the linked Oculus identity.
+    meta_alias = None
+    if raw_uid and settings.ApiKey:
         try:
-            acct = requests.post(
-                f"https://{settings.TitleId}.playfabapi.com/Server/GetUserAccountInfo",
-                json={"PlayFabId": user_id},
-                headers=settings.get_auth_headers(),
-                timeout=10,
-            )
-        except requests.exceptions.RequestException as e:
-            logger.error(f"[Photon] GetUserAccountInfo request failed: {e}")
-            return _photon_error(3, "Account lookup unavailable", 503)
+            meta_alias = get_meta_alias(raw_uid)
+        except Exception:
+            pass
 
-        if acct.status_code != 200:
-            return _photon_error(3, "Failed to retrieve account info", 403)
+    nickname = None
 
-        user_info        = (acct.json().get("data") or {}).get("UserInfo") or {}
-        server_custom_id = (user_info.get("ServerCustomIdInfo") or {}).get("CustomId") or ""
-        nickname         = (user_info.get("TitleInfo") or {}).get("DisplayName")
-
-        if "OCULUS" not in server_custom_id:
-            return _photon_error(3, "Account not linked to Oculus", 403)
-
-        # The real OculusId was stored server-side during /api/PlayFabAuthentication.
-        oculus_id = get_oculus_id_for_playfab(user_id)
-        if not oculus_id:
-            return _photon_error(3, "No OculusId on file, re-authenticate first", 403)
-
-        # 3. Validate the nonce against Oculus.
-        if not get_is_nonce_valid(nonce, oculus_id):
-            should_ban, failure_count = check_and_record_nonce_failure(user_id)
-            if should_ban:
-                ban_user(user_id, name=nickname, reason=f"invalid credentials. if you think this is false, report this to the discord with this token: {request.remote_addr}.")
-            temp_ban_ip(client_ip)
+    if ticket:
+        resp = requests.post(
+            f"https://{settings.TitleId}.playfabapi.com/Server/AuthenticateSessionTicket",
+            json={"SessionTicket": ticket},
+            headers=settings.get_auth_headers(),
+        )
+        if resp.status_code == 200:
+            nickname = (resp.json().get("data", {}).get("UserInfo", {})
+                        .get("TitleInfo", {}).get("DisplayName"))
             _post_discord_embed(settings.photon_webhook_url, {
-                "title": "❌ Photon Auth Failed", "color": 0xE74C3C,
-                "fields": [
-                    {"name": "Reason",   "value": "Nonce validation failed", "inline": False},
-                    {"name": "UserId",   "value": user_id, "inline": True},
-                    {"name": "OculusId", "value": str(oculus_id), "inline": True},
-                    {"name": "Failures", "value": str(failure_count), "inline": True},
-                    {"name": "Banned",   "value": str(should_ban), "inline": True},
-                    {"name": "IP",       "value": client_ip, "inline": True},
-                ],
+                "color": 0x00FF00,
+                "fields": [{"name": "Photon Auth",
+                            "value": (f"```ini\n[User ID]: {user_id.upper()}\n"
+                                      f"[Nickname]: {nickname or 'None'}\n"
+                                      f"[Platform]: {platform or 'Quest'}\n"
+                                      f"[Meta Alias]: {meta_alias or 'N/A'}\n"
+                                      f"[IP]: {client_ip}```")}],
+                "author": {"name": "Photon Auth"},
             })
-            return _photon_error(3, "Failed Nonce Verification", 403)
+            return jsonify({
+                "resultCode": 1,
+                "message":    f"Authenticated user {user_id.lower()} title {settings.TitleId.lower()}",
+                "userId":     user_id.upper(),
+                "nickname":   nickname or None,
+                "ResultCode": 1,
+                "UserId":     user_id,
+            })
 
-        with nonce_failures_lock:
-            nonce_failures.pop(user_id, None)
-
+    req = requests.post(
+        f"https://{settings.TitleId}.playfabapi.com/Server/GetUserAccountInfo",
+        json={"PlayFabId": user_id},
+        headers=settings.get_auth_headers(),
+    )
+    if req.status_code == 200:
+        info     = req.json().get("data", {}).get("UserInfo", {})
+        nickname = (info.get("TitleInfo", {}).get("DisplayName") or
+                    info.get("UserAccountInfo", {}).get("Username")) or None
         _post_discord_embed(settings.photon_webhook_url, {
-            "title": "✅ Photon Auth", "color": 0x2ECC71,
-            "fields": [
-                {"name": "UserId",   "value": user_id, "inline": True},
-                {"name": "OculusId", "value": str(oculus_id), "inline": True},
-                {"name": "Nickname", "value": nickname or "None", "inline": True},
-                {"name": "IP",       "value": client_ip, "inline": True},
-            ],
+            "color": 0x00FF00,
+            "fields": [{"name": "Photon Auth (fallback)",
+                        "value": (f"```ini\n[User ID]: {user_id.upper()}\n"
+                                  f"[Nickname]: {nickname or 'None'}\n"
+                                  f"[Platform]: {platform or 'Quest'}\n"
+                                  f"[Meta Alias]: {meta_alias or 'N/A'}\n"
+                                  f"[IP]: {client_ip}```")}],
+            "author": {"name": "Photon Auth"},
         })
-
         return jsonify({
             "resultCode": 1,
             "message":    f"Authenticated user {user_id.lower()} title {settings.TitleId.lower()}",
@@ -2361,11 +2127,10 @@ def photon():
             "nickname":   nickname,
             "ResultCode": 1,
             "UserId":     user_id,
-        }), 200
+        })
 
-    except Exception:
-        logger.error("[Photon] unhandled exception:\n" + traceback.format_exc())
-        return _photon_error(0, "Internal auth error", 500)
+    return jsonify({"resultCode": 0, "message": "Something went wrong",
+                    "userId": None, "nickname": None}), 500
 
 @app.route("/PathCreate", methods=["POST"])
 def path_create():
@@ -2454,6 +2219,18 @@ def auth_begin():
     logger.info(f"[Mothership] /auth/begin user_id={user_id}")
     return jsonify({"AttestationNonce": nonce}), 201
 
+# ------------------------------------------------------------
+# Discord embed field/description limits (see Discord API docs):
+#   - field.name        <= 256 chars
+#   - field.value        <= 1024 chars
+#   - total embed size   <= 6000 chars (sum of all text fields)
+#   - max 25 fields per embed
+# The attestation token (and the raw request body that contains it) can
+# easily blow past the 1024-char field value limit, which makes Discord
+# reject the whole webhook with a 400 — so nothing gets logged at all.
+# _discord_safe_field() below truncates any dynamic value down to a size
+# that's safely under that per-field cap before it goes into an embed.
+# ------------------------------------------------------------
 DISCORD_FIELD_VALUE_LIMIT = 1024
 
 
@@ -2480,14 +2257,21 @@ def _discord_safe_field(value: str, reserved_wrapper_chars: int = 0, max_len: in
 
 def _log_attestation_request(user_id, attestation_token, meta_nonce, client_ip, rjson):
     """Post a plain debug embed for every /auth/complete call, showing the
-    request fields as received (attestation token / nonce are truncated, and
-    the raw body has sensitive keys redacted).
+    raw request fields as received. Deliberately dry formatting: no emoji,
+    no capitalized headers, just the data.
+
+    Every dynamic value (raw body, attestation token, meta nonce) is run
+    through _discord_safe_field() first so a long attestation token can
+    never push a field — or the whole embed — over Discord's size limits
+    and cause the webhook POST to be silently rejected.
     """
     try:
         raw_body = json.dumps(rjson, indent=2)
     except Exception:
         raw_body = str(rjson)
 
+    # Reserve space for the ```json ... ``` / ``` ... ``` code-fence wrapper
+    # characters we add around these values below.
     raw_body_safe = _discord_safe_field(raw_body, reserved_wrapper_chars=len("```json\n\n```"))
     token_safe    = _discord_safe_field(attestation_token or "none", reserved_wrapper_chars=len("```\n```"))
     meta_nonce_safe = _discord_safe_field(meta_nonce or "none", max_len=256)
@@ -2524,7 +2308,7 @@ def auth_complete():
         temp_ban_ip(client_ip)
         logger.warning(f"[Mothership] /auth/complete rejected ({reason}) "
                        f"ip={client_ip} user_id={user_id}")
-        send_mothership_webhook("Attestation Check Failed", {}, user_id or "unknown",
+        send_mothership_webhook("❌ Invalid Attestation Token", {}, user_id or "unknown",
                                 error=reason, color=15105570)
         return jsonify({"error": TEMP_IP_BAN_REASON, "detail": reason}), status
 
@@ -2534,6 +2318,11 @@ def auth_complete():
         return _invalid("missing AttestationToken")
 
     try:
+        # Prefer a nonce registered via /auth/begin (server-issued, single
+        # use). Some clients skip that handshake entirely and just send a
+        # MetaNonce alongside the token instead — fall back to that so
+        # those clients can still authenticate, but guard against replay
+        # since a self-asserted nonce isn't single-use by construction.
         expected_nonce  = pending_nonces.pop(user_id, None)
         used_begin_flow = expected_nonce is not None
 
@@ -2560,26 +2349,6 @@ def auth_complete():
 
         claims = json.loads(base64.urlsafe_b64decode(
             claims_b64 + "=" * (-len(claims_b64) % 4)))
-
-        # The certificate digest is part of the decoded Oculus attestation claims,
-        # not the /api/PlayFabAuthentication request body. Log it here.
-        app_state = claims.get("app_state", {}) or {}
-        if "package_cert_sha256_digest" in app_state:
-            digest = app_state.get("package_cert_sha256_digest")
-            valid_digest = (
-                isinstance(digest, list)
-                and digest == [EXPECTED_PACKAGE_CERT_SHA256]
-            )
-            send_package_cert_webhook(
-                client_ip, user_id, claims, digest, valid_digest,
-                banned=not valid_digest,
-            )
-            if not valid_digest:
-                temp_ban_cert_user(user_id)
-                return _invalid(
-                    "invalid package certificate SHA-256 digest; "
-                    "user placed on a 10-minute certificate ban"
-                )
 
         if claims.get("request_details", {}).get("nonce") != expected_nonce:
             return _invalid("nonce mismatch")
@@ -2648,7 +2417,14 @@ def get_inventory_client():
 
 @app.route("/v1/title-data/client", methods=["GET"])
 def get_title_data_client():
-    return jsonify({"Results": [{"key": "MOTD", "data": MOTD_TEXT}]}), 200
+    keys_param     = request.args.get("keys", "")
+    requested_keys = [k.strip() for k in keys_param.split(",") if k.strip()] or None
+    title_data     = get_title_data_from_mongo(requested_keys)
+
+    if title_data is None:
+        return jsonify({"error": "title data not available",
+                        "message": "No title data found in database"}), 404
+    return jsonify({"Results": title_data}), 200
 
 @app.route("/v1/userdata/client", methods=["GET", "POST"])
 def userdata_client():
@@ -2865,126 +2641,6 @@ def get_my_subscriptions_and_their_benefits():
 @app.route('/api/TD', methods=['POST'])
 def titled_data():
     return jsonify({"MOTD":"<color=red>WELCOME TO FAST TAGGERS!</color>"})
-
-@app.route("/api/GetRoomPlayers", methods=["POST"])
-def get_room_players():
-    try:
-        data = request.get_json(silent=True) or {}
-
-        room_name = str(
-            data.get("roomName", "")
-        ).strip()
-
-        if not room_name:
-            return jsonify({
-                "error": "roomName is required",
-                "players": []
-            }), 400
-
-        room_data = load_room_data()
-
-        if not isinstance(room_data, dict):
-            return jsonify({
-                "error": "Room data is invalid",
-                "players": []
-            }), 500
-
-        # Try several common room-data layouts.
-        room = (
-            room_data.get(room_name)
-            or room_data.get("rooms", {}).get(room_name)
-        )
-
-        if not room:
-            return jsonify({
-                "roomName": room_name,
-                "players": []
-            }), 200
-
-        # Allow either:
-        # {"players": [...]}
-        # or directly a player list.
-        if isinstance(room, dict):
-            players = (
-                room.get("players")
-                or room.get("Players")
-                or room.get("members")
-                or room.get("Members")
-                or []
-            )
-        elif isinstance(room, list):
-            players = room
-        else:
-            players = []
-
-        output = []
-
-        for player in players:
-            if isinstance(player, str):
-                output.append({
-                    "username": player,
-                    "playfabId": "",
-                    "region": "",
-                    "zone": "",
-                    "room": room_name
-                })
-                continue
-
-            if not isinstance(player, dict):
-                continue
-
-            output.append({
-                "username": (
-                    player.get("username")
-                    or player.get("userName")
-                    or player.get("Username")
-                    or player.get("Nickname")
-                    or ""
-                ),
-
-                "playfabId": (
-                    player.get("playfabId")
-                    or player.get("PlayFabId")
-                    or player.get("PlayFabID")
-                    or player.get("playerId")
-                    or ""
-                ),
-
-                "region": (
-                    player.get("region")
-                    or player.get("Region")
-                    or ""
-                ),
-
-                "zone": (
-                    player.get("zone")
-                    or player.get("Zone")
-                    or ""
-                ),
-
-                "room": room_name
-            })
-
-        return jsonify({
-            "roomName": room_name,
-            "players": output,
-            "count": len(output)
-        }), 200
-
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "players": []
-        }), 500
-
-
-# Catch-all 404. Kept LAST; Flask always prefers more specific routes over
-# the <path:> converter, but keeping it at the end avoids any confusion.
-@app.route("/<path:endpoint>", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
-def catch_all_logger(endpoint):
-    logger.info(f"[CatchAll] No route matched: /{endpoint} method={request.method}")
-    return jsonify({"error": "Not Found"}), 404
-
 
 if __name__ == "__main__":
     app.start_time = time.time()
