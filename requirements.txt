@@ -1,0 +1,6 @@
+Flask
+requests
+python-jose[cryptography]
+cryptography
+pymongo
+gunicorn

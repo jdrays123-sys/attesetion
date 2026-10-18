@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.git
+players.json
+codes.json
+votes.json
+roomcodes.json
